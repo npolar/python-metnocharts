@@ -24,13 +24,13 @@ class IceChartDataset(object):
         self.south   = -1450000
         self.east    =  570000
         self.height = (abs(self.south - self.north) + self.yres)/self.yres
-        self.width = (abs(self.east - self.west) + self.xres)/self.xres
+        self.width  = (abs(self.east - self.west) + self.xres)/self.xres
 
         self.geotransform = transform.from_origin(self.west-self.xres/2,
                                                self.north+self.xres/2,
                                                self.xres,
                                                self.yres)
-    
+
     def rasterize(self):
         if self.shapes is None:
             self.read_shp()
@@ -39,8 +39,9 @@ class IceChartDataset(object):
         self.shapes.to_crs(self.crs)
         shapes = ((geom,value) for geom, value in zip(self.shapes.geometry,
                                                       self.shapes['Junk']))
-        self.ice_conc = features.rasterize(shapes, 
-                                           out_shape=(self.height, self.width), fill=0,
+        self.ice_conc = features.rasterize(shapes,
+                                           out_shape=(self.height, self.width),
+                                           fill=0,
                                            transform=self.geotransform)
 
     def save_netcdf(self, fname):
@@ -55,7 +56,7 @@ class IceChartDataset(object):
         self.read_shp()
 
     def read_shp(self):
-        shp_dst = gpd.read_file(self.fname) 
+        shp_dst = gpd.read_file(self.fname)
         shp_dst = shp_dst.loc[shp_dst['ICE_TYPE'] == 'Fast Ice']
         self.shapes = shp_dst
 
@@ -71,13 +72,13 @@ class IceChartDataset(object):
         root_dst.createDimension('time', None)
         root_dst.createDimension('y', self.height)
         root_dst.createDimension('x', self.width)
-        
+
         # create variables
         root_dst.createVariable('time',
-                                'i4', 
+                                'i4',
                                 dimensions=('time'))
         root_dst.createVariable('ice_concentration',
-                                'i4', 
+                                'i4',
                                 dimensions=('time', 'y', 'x'),
                                 zlib=True)
         root_dst.variables['time'].units = 'Days since 2000-01-01'
@@ -90,4 +91,3 @@ def get_crs():
 def get_fastice_from_chart(fname):
     fastice_dst = IceChartDataset(fname)
     return fastice_dst
-
