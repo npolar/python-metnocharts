@@ -36,11 +36,12 @@ class IceChartDataset(object):
         if self.shapes is None:
             self.read_shp()
 
-        self.shapes['Junk']=1
+        self.shapes['Value']=1
+        self.shapes.crs = {'init':'epsg:4326'}
         self.shapes.to_crs(self.crs)
         shapes = ((geom,value) for geom, value in zip(self.shapes.geometry,
-                                                      self.shapes['Junk']))
-        self.ice_conc = features.rasterize(shapes,
+                                                        self.shapes['Value']))
+        self.ice_conc = features.rasterize(shapes=shapes,
                                            out_shape=(self.height, self.width),
                                            fill=0,
                                            transform=self.geotransform)
