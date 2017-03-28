@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 import argparse
-
-from metnocharts.utils import get_timestamp_from_filename
 from metnocharts.charts import get_fastice_from_chart
 
 def main():
