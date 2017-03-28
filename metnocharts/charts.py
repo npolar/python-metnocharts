@@ -1,6 +1,7 @@
 import numpy as np
 import netCDF4 as nc
 import geopandas as gpd
+import rasterio
 from rasterio import features
 from rasterio import transform
 
@@ -50,6 +51,26 @@ class IceChartDataset(object):
             nc_filehandle['ice_concentration'][0,:,:] = self.ice_conc
             nc_filehandle['time'][:] = self.timestamp
             nc_filehandle.close()
+
+    def make_geotiff_profile(self):
+        profile = {'driver': 'GTiff',
+                   'crs': self.crs,
+                   'compress': 'lzw',
+                   'dtype': 'uint8',
+                   'interleave': 'band',
+                   'count': 1,
+                   'transform': self.geotransform,
+                   'height': self.height,
+                   'width': self.width}
+        return profile
+
+    def save_geotiff(self, fname):
+        profile = self.make_geotiff_profile()
+        if self.ice_conc is not None:
+            with rasterio.open(fname, 'w', **profile) as dst:
+                dst.write(self.ice_conc.astype(rasterio.uint8), 1)
+        else:
+            raise Exception('No ice concentration array available')
 
     def read_dst(self, fname):
         self.timestamp = get_timestamp_from_filename(self.fname)

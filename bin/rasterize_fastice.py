@@ -15,7 +15,7 @@ def main():
 
     fastice_dst = get_fastice_from_chart(ifile)
     fastice_dst.rasterize()
-    fastice_dst.save_netcdf(ofile)
+    fastice_dst.save_geotiff(ofile)
 
 if __name__ == '__main__':
     main()
