@@ -36,9 +36,9 @@ class IceChartDataset(object):
         if self.shapes is None:
             self.read_shp()
 
-        self.shapes['Value']=1
+        self.shapes['Value'] = 1
         self.shapes.crs = {'init':'epsg:4326'}
-        self.shapes.to_crs(self.crs)
+        self.shapes = self.shapes.to_crs(self.crs)
         shapes = ((geom,value) for geom, value in zip(self.shapes.geometry,
                                                         self.shapes['Value']))
         self.ice_conc = features.rasterize(shapes=shapes,
@@ -113,3 +113,9 @@ def get_crs():
 def get_fastice_from_chart(fname):
     fastice_dst = IceChartDataset(fname)
     return fastice_dst
+
+def rasterize_layer(polygons, rst, field, shape=None):
+    # this is where we create a generator of geom, value pairs to use in rasterizing
+    shapes = ((geom,value) for geom, value in zip(polygons.geometry, polygons[field]))
+    burned = features.rasterize(shapes=shapes, fill=0, out_shape=shape, transform=rst.transform)
+    return burned
