@@ -31,6 +31,7 @@ class IceChartDataset(object):
                                                self.north+self.xres/2,
                                                self.xres,
                                                self.yres)
+        return self.geotransform
 
     def rasterize(self):
         if self.shapes is None:
