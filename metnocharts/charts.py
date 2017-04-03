@@ -4,8 +4,11 @@ import geopandas as gpd
 import rasterio
 from rasterio import features
 from rasterio import transform
+from logging import getLogger
 
 from metnocharts.utils import get_timestamp_from_filename
+
+LOG = getLogger(__name__)
 
 
 class IceChartDataset(object):
@@ -42,6 +45,7 @@ class IceChartDataset(object):
         self.shapes = self.shapes.to_crs(self.crs)
         shapes = ((geom,value) for geom, value in zip(self.shapes.geometry,
                                                         self.shapes['Value']))
+        LOG.info('Rasterizing file {}'.format(self.fname))
         self.ice_conc = features.rasterize(shapes=shapes,
                                            out_shape=(self.height, self.width),
                                            fill=0,

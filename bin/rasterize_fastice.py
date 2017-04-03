@@ -2,6 +2,11 @@
 
 import argparse
 from metnocharts.charts import get_fastice_from_chart
+import logging
+
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+                    datefmt='%m-%d %H:%M')
 
 def main():
 
